@@ -1,4 +1,4 @@
-﻿const API_BASE = "https://trackvista.onrender.com";
+const API_BASE = "https://trackvista.vercel.app";
 const token = localStorage.getItem("tv_token");
 
 if (!token) {

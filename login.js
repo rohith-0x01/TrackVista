@@ -1,4 +1,4 @@
-﻿const API_BASE = "https://trackvista.onrender.com";
+const API_BASE = "https://trackvista.vercel.app";
 const openLogin = document.getElementById("open-login");
 const hero = document.getElementById("hero");
 const auth = document.getElementById("auth");

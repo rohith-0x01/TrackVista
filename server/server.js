@@ -1,10 +1,13 @@
-﻿const express = require("express");
+const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const crypto = require("crypto");
 const path = require("path");
 
 const app = express();
-const dbPath = path.join(__dirname, "trackvista.db");
+const isVercel = !!process.env.VERCEL;
+const dbPath = isVercel
+  ? path.join("/tmp", "trackvista.db")
+  : path.join(__dirname, "trackvista.db");
 const db = new sqlite3.Database(dbPath);
 
 app.use(express.json({ limit: "1mb" }));
@@ -459,14 +462,22 @@ app.post("/api/messages", requireAuth, async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-initDb()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`TrackVista API running on http://localhost:${PORT}`);
+module.exports = app;
+
+if (!isVercel) {
+  const PORT = process.env.PORT || 3000;
+  initDb()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`TrackVista API running on http://localhost:${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Failed to initialize database", error);
+      process.exit(1);
     });
-  })
-  .catch((error) => {
+} else {
+  initDb().catch((error) => {
     console.error("Failed to initialize database", error);
-    process.exit(1);
   });
+}
