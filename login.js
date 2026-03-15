@@ -1,4 +1,4 @@
-﻿const API_BASE = "http://localhost:3000";
+﻿const API_BASE = "https://trackvista.onrender.com";
 const openLogin = document.getElementById("open-login");
 const hero = document.getElementById("hero");
 const auth = document.getElementById("auth");
