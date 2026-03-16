@@ -21,8 +21,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static frontend files from the project root
-app.use(express.static(path.join(__dirname, "..")));
+// Serve static frontend files from the bundled public folder
+app.use(express.static(path.join(__dirname, "public")));
 
 const run = (sql, params = []) =>
   new Promise((resolve, reject) => {
