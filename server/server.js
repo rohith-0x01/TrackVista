@@ -21,9 +21,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (req, res) => {
-  res.json({ status: "ok", message: "TrackVista API is running." });
-});
+// Serve static frontend files from the project root
+app.use(express.static(path.join(__dirname, "..")));
 
 const run = (sql, params = []) =>
   new Promise((resolve, reject) => {
