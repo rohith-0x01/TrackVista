@@ -1,0 +1,417 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TrackVista | Client Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="grid"></div>
+  </div>
+
+  <main class="page">
+    <section class="dashboard" id="dashboard">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+          <div class="account">
+            <div class="avatar">TV</div>
+            <div>
+              <div class="account-name" id="account-name">Client Name</div>
+            </div>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-link" data-target="page-new">New Project</button>
+          <button class="nav-link" data-target="page-track">Track Project</button>
+          <button class="nav-link" data-target="page-communicate">Communicate</button>
+          <button class="nav-link" data-target="page-meetings">Meeting Schedule</button>
+          <button class="nav-link" data-target="page-feedback">Feedback</button>
+          <button class="nav-link" data-target="page-help">Help</button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="ghost logout-btn" id="logout-btn" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div class="topbar-title">
+            <h2 id="page-title">Select a section</h2>
+          </div>
+        </header>
+
+        <div class="panel page active" id="page-empty">
+          <div class="page-stack">
+            <p class="muted">Select a menu item to view details.</p>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-new">
+          <div class="page-stack">
+            <div class="page-heading">
+              <div class="chip">Make Project</div>
+              <h3>New Project Details</h3>
+              <p>Share the complete project requirements to get started.</p>
+            </div>
+            <form class="project-form" id="new-project-form">
+              <label>
+                <span>Project Type</span>
+                <select name="projectType" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option>Website</option>
+                  <option>Mobile App</option>
+                  <option>Software</option>
+                  <option>AI System</option>
+                </select>
+              </label>
+              <label>
+                <span>Project Category</span>
+                <input type="text" name="projectCategory" placeholder="E-commerce, Portfolio, Management system, etc." required />
+              </label>
+              <label>
+                <span>Project Description</span>
+                <textarea rows="3" name="projectDescription" placeholder="Describe the project scope" required></textarea>
+              </label>
+              <label>
+                <span>Project Objective</span>
+                <textarea rows="2" name="projectObjective" placeholder="Main goals and outcomes" required></textarea>
+              </label>
+              <label>
+                <span>Project Requirements</span>
+                <textarea rows="3" name="projectRequirements" placeholder="Functional and non-functional requirements" required></textarea>
+              </label>
+              <label>
+                <span>Design Requirements</span>
+                <textarea rows="2" name="designRequirements" placeholder="UI/UX expectations, references, branding" required></textarea>
+              </label>
+              <label>
+                <span>Target Users</span>
+                <input type="text" name="targetUsers" placeholder="Who will use the product?" required />
+              </label>
+              <label>
+                <span>Technology Preferences</span>
+                <input type="text" name="technologyPreferences" placeholder="Preferred stack or platforms" required />
+              </label>
+              <div class="two-col">
+                <label>
+                  <span>Budget Information</span>
+                  <input type="text" name="budget" placeholder="Estimated budget" required />
+                </label>
+                <label>
+                  <span>Project Deadline</span>
+                  <input type="date" name="deadline" required />
+                </label>
+              </div>
+              <label class="file-input">
+                <span>File Attachment</span>
+                <input type="file" name="attachment" />
+              </label>
+              <button class="primary" type="submit">Submit Project</button>
+              <div class="form-status hidden" id="project-status">Project saved.</div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-track">
+          <div class="page-stack">
+            <div class="page-heading">
+              <div class="chip">Track Project</div>
+              <h3>Project Overview</h3>
+              <p>View key details, progress, deadlines, and updates.</p>
+            </div>
+
+            <div class="track-stack">
+              <div class="card reveal">
+                <h4>Project Information</h4>
+                <p><strong>Project Name:</strong> <span id="track-project-name">TrackVista Core</span></p>
+                <p><strong>Project ID:</strong> <span id="track-project-id">TV-0246</span></p>
+                <p><strong>Project Type:</strong> <span id="track-project-type">Web Platform</span></p>
+                <p><strong>Project Description:</strong> <span id="track-project-desc">Client dashboard for project visibility.</span></p>
+              </div>
+              <div class="card reveal">
+                <h4>Project Health Status</h4>
+                <p><strong>Current:</strong> <span id="track-health-current">On Track</span></p>
+                <p>At Risk</p>
+                <p>Delayed</p>
+              </div>
+              <div class="panel reveal">
+                <h4>Project Progress</h4>
+                <div class="progress">
+                  <div class="progress-bar" id="track-progress-bar" style="width: 80%"></div>
+                </div>
+                <div class="progress-meta" id="track-progress-text">80%</div>
+              </div>
+              <div class="card reveal">
+                <h4>Developer Details</h4>
+                <p><strong>Developer Name:</strong> Rohan Patel</p>
+                <p><strong>Role:</strong> Full Stack Engineer</p>
+                <p><strong>Contact:</strong> rohan@trackvista.io</p>
+              </div>
+              <div class="card reveal">
+                <h4>Deadline and Time Remaining</h4>
+                <p><strong>Delivery Date:</strong> <span id="track-deadline">20 May 2026</span></p>
+                <p><strong>Time Remaining:</strong> <span id="track-remaining">12 Days</span></p>
+              </div>
+              <div class="panel reveal">
+                <h4>Recent Updates / Activity Feed</h4>
+                <ul class="activity">
+                  <li>10 May - Design phase completed</li>
+                  <li>12 May - Development started</li>
+                  <li>15 May - Database integration completed</li>
+                </ul>
+              </div>
+              <div class="panel reveal">
+                <h4>Issue / Risk Indicator</h4>
+                <ul class="activity">
+                  <li>Delay due to API integration</li>
+                  <li>Waiting for client approval</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-communicate">
+          <div class="page-stack">
+            <div class="page-heading">
+              <div class="chip">Communicate</div>
+              <h3>Real-Time Chat System</h3>
+              <p>Send messages instantly and track delivery status.</p>
+            </div>
+
+            <div class="grid-cards">
+              <div class="card">
+                <h4>Developer / Team Contact Panel</h4>
+                <ul class="activity">
+                  <li>
+                    <strong>Developer name:</strong> Rohan Patel<br />
+                    <span class="muted">Role: Backend</span>
+                  </li>
+                  <li>
+                    <strong>Developer name:</strong> Ananya Rao<br />
+                    <span class="muted">Role: Frontend</span>
+                  </li>
+                  <li>
+                    <strong>Developer name:</strong> Kavya Singh<br />
+                    <span class="muted">Role: Designer</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="panel chat">
+              <h4>Chat</h4>
+              <div class="chat-messages" id="chat-messages">
+                <p class="muted" id="chat-empty">No messages yet.</p>
+              </div>
+              <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your message..." />
+                <button class="primary" id="chat-send" type="button">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-meetings">
+          <div class="page-stack">
+            <div class="page-heading">
+              <div class="chip">Meeting Schedule</div>
+              <h3>Book a Meeting</h3>
+            </div>
+
+            <div class="meeting-grid">
+              <div class="panel calendar-panel">
+                <div class="calendar-header">
+                  <h4 id="calendar-month">June 2026</h4>
+                  <div class="calendar-controls">
+                    <button class="icon-btn" type="button" id="cal-prev" aria-label="Previous month"><</button>
+                    <button class="icon-btn" type="button" id="cal-next" aria-label="Next month">></button>
+                  </div>
+                </div>
+                <div class="calendar-week">
+                  <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="calendar-days" id="calendar-days"></div>
+                <label class="calendar-input">
+                  <span>Meeting Date</span>
+                  <input type="date" required />
+                </label>
+              </div>
+
+              <form class="panel meeting-form" id="meeting-form">
+                <label>
+                  <span>Meeting Title</span>
+                  <input type="text" name="meetingTitle" placeholder="Project Progress Meeting" required />
+                  <span class="hint">Purpose: Helps identify the meeting purpose.</span>
+                </label>
+                <label>
+                  <span>Project Name</span>
+                  <input type="text" name="projectName" placeholder="Project: E-Commerce Website Development" required />
+                  <span class="hint">Purpose: Useful when multiple projects exist.</span>
+                </label>
+                <div class="two-col">
+                  <label>
+                    <span>Meeting Date</span>
+                    <input type="date" name="meetingDate" required />
+                  </label>
+                  <label>
+                    <span>Meeting Time</span>
+                    <div class="time-range">
+                      <input type="time" name="timeStart" required />
+                      <span class="muted">to</span>
+                      <input type="time" name="timeEnd" required />
+                    </div>
+                  </label>
+                </div>
+                <label>
+                  <span>Meeting Type</span>
+                  <select name="meetingType" required>
+                    <option value="" disabled selected>Select type</option>
+                    <option>Online</option>
+                    <option>Offline</option>
+                  </select>
+                </label>
+                <button class="primary" type="submit">Book Meeting</button>
+                <div class="form-status hidden" id="meeting-status">Meeting saved.</div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-feedback">
+          <div class="page-stack">
+            <div class="page-heading">
+              <div class="chip">Feedback</div>
+              <h3>Share Your Experience</h3>
+              <p>Help us improve by reviewing your project experience.</p>
+            </div>
+
+            <form class="feedback-form" id="feedback-form">
+              <label>
+                <span>Project Selection</span>
+                <select name="projectSelection" required>
+                  <option value="" disabled selected>Select project</option>
+                  <option>Website Development</option>
+                  <option>Mobile App Build</option>
+                  <option>AI System Upgrade</option>
+                </select>
+              </label>
+
+              <div class="rating-block">
+                <span>Star Rating</span>
+                <div class="stars" role="radiogroup" aria-label="Star rating">
+                  <input type="radio" id="star5" name="stars" value="5" />
+                  <label for="star5">&#9733;</label>
+                  <input type="radio" id="star4" name="stars" value="4" />
+                  <label for="star4">&#9733;</label>
+                  <input type="radio" id="star3" name="stars" value="3" />
+                  <label for="star3">&#9733;</label>
+                  <input type="radio" id="star2" name="stars" value="2" />
+                  <label for="star2">&#9733;</label>
+                  <input type="radio" id="star1" name="stars" value="1" />
+                  <label for="star1">&#9733;</label>
+                </div>
+              </div>
+
+              <label>
+                <span>Feedback Comment Section</span>
+                <textarea rows="3" name="comment" placeholder="The development team communicated well and delivered the project on time." required></textarea>
+              </label>
+
+              <div class="panel">
+                <h4>Service Quality Rating</h4>
+                <div class="quality-grid">
+                  <label><span>Communication</span><input type="range" name="communication" min="1" max="5" value="4" /></label>
+                  <label><span>Development Quality</span><input type="range" name="development" min="1" max="5" value="4" /></label>
+                  <label><span>Design Quality</span><input type="range" name="design" min="1" max="5" value="4" /></label>
+                  <label><span>Project Management</span><input type="range" name="management" min="1" max="5" value="4" /></label>
+                </div>
+              </div>
+
+              <label>
+                <span>Delivery Satisfaction</span>
+                <select name="deliverySatisfaction" required>
+                  <option value="" disabled selected>Select satisfaction</option>
+                  <option>Very Satisfied</option>
+                  <option>Satisfied</option>
+                  <option>Neutral</option>
+                  <option>Unsatisfied</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Suggestion Section</span>
+                <textarea rows="2" name="suggestion" placeholder="Provide weekly progress updates."></textarea>
+              </label>
+
+              <label class="checkbox">
+                <input type="checkbox" name="anonymous" id="anon-feedback" />
+                <span>Submit feedback anonymously</span>
+              </label>
+
+              <div class="feedback-actions">
+                <button class="primary" type="submit">Submit Feedback</button>
+              </div>
+
+              <div class="thank-you hidden" id="feedback-confirm">
+                Thank you for your feedback. Your response helps us improve our services.
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel page hidden" id="page-help">
+          <div class="page-stack">
+            <div class="page-heading"></div>
+
+            <div class="panel help-search">
+              <h4>Search Help Bar</h4>
+              <div class="search-row">
+                <input type="text" placeholder="How to schedule a meeting?" />
+                <button class="primary" type="button">Search</button>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h4>Frequently Asked Questions (FAQ)</h4>
+              <ul class="activity">
+                <li><strong>How do I track my project progress?</strong><br />Open Track Project from the left menu.</li>
+                <li><strong>How can I upload files?</strong><br />Use File Attachment in New Project.</li>
+                <li><strong>How do I schedule a meeting?</strong><br />Go to Meeting Schedule and select a date.</li>
+                <li><strong>How can I contact the developer?</strong><br />Use the Communicate page chat panel.</li>
+              </ul>
+            </div>
+
+            <div class="panel">
+              <h4>Contact Support</h4>
+              <p><strong>Support Email:</strong> support@trackvista.io</p>
+              <p><strong>Phone Number:</strong> +91 90000 12345</p>
+              <p><strong>Support Chat:</strong> Available 9 AM - 6 PM</p>
+            </div>
+
+            <div class="panel help-feedback">
+              <h4>Feedback on Help Articles</h4>
+              <div class="help-actions">
+                <span>Was this helpful?</span>
+                <button class="ghost" type="button" id="help-yes">Yes</button>
+                <button class="ghost" type="button" id="help-no">No</button>
+              </div>
+              <div class="help-status hidden" id="help-status">Thanks for your feedback.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

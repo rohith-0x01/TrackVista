@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TrackVista | Client Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="grid"></div>
+  </div>
+
+  <main class="page">
+    <section class="hero" id="hero">
+      <div class="brand">
+        <h1 class="title" aria-label="TrackVista">
+          <span>Track</span><span>Vista</span>
+        </h1>
+        <p class="subtitle">
+          Stay updated with real-time project progress.
+        </p>
+        <button class="cta" id="open-login">Login</button>
+      </div>
+    </section>
+
+    <section class="auth hidden" id="auth">
+      <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="auth-header">
+          <div>
+            <h2 id="auth-title">Welcome to TrackVista</h2>
+            <p class="muted">Choose your account type to continue.</p>
+          </div>
+        </div>
+
+        <div class="toggle">
+          <button class="toggle-btn active" data-mode="signin">Sign In</button>
+          <button class="toggle-btn" data-mode="signup">Sign Up</button>
+        </div>
+
+        <form class="form" id="signin-form">
+          <label>
+            <span>Username</span>
+            <input type="text" placeholder="Enter your username" value="Rohith" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" placeholder="Enter your password" value="123" required />
+          </label>
+          <div class="row">
+            <label class="checkbox">
+              <input type="checkbox" />
+              <span>Remember me</span>
+            </label>
+            <a class="link" href="#">Forgot password?</a>
+          </div>
+          <button class="primary" type="submit">Sign In</button>
+        </form>
+
+        <form class="form hidden" id="signup-form">
+          <label>
+            <span>Username</span>
+            <input type="text" placeholder="Choose a username" required />
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" placeholder="Enter your email" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" placeholder="Create a password" required />
+          </label>
+          <button class="primary" type="submit">Create Account</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="login.js"></script>
+</body>
+</html>
