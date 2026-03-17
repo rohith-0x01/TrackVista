@@ -1,4 +1,4 @@
-const API_BASE = ""; // served by same Render host
+const API_BASE = "https://trackvista.onrender.com"; // Render backend
 const token = localStorage.getItem("tv_token");
 
 if (!token) {

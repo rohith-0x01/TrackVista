@@ -1,4 +1,4 @@
-const API_BASE = ""; // served by same Render host
+const API_BASE = "https://trackvista.onrender.com"; // Render backend
 const openLogin = document.getElementById("open-login");
 const hero = document.getElementById("hero");
 const auth = document.getElementById("auth");
