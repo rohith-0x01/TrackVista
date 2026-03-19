@@ -1,4 +1,4 @@
-const API_BASE = "https://trackvista.onrender.com"; // Render backend
+const API_BASE = ""; // same-origin (Vercel serves both frontend + API)
 const token = localStorage.getItem("tv_token");
 
 if (!token) {

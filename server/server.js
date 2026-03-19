@@ -1,6 +1,7 @@
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const path = require("path");
 
 const app = express();
@@ -8,7 +9,16 @@ const isVercel = !!process.env.VERCEL;
 const dbPath = isVercel
   ? path.join("/tmp", "trackvista.db")
   : path.join(__dirname, "trackvista.db");
-const db = new sqlite3.Database(dbPath);
+
+const JWT_SECRET = process.env.JWT_SECRET || "trackvista-secret-key-2026";
+
+let db;
+const getDb = () => {
+  if (!db) {
+    db = new sqlite3.Database(dbPath);
+  }
+  return db;
+};
 
 app.use(express.json({ limit: "1mb" }));
 app.use((req, res, next) => {
@@ -26,7 +36,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const run = (sql, params = []) =>
   new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
+    getDb().run(sql, params, function (err) {
       if (err) reject(err);
       else resolve(this);
     });
@@ -34,7 +44,7 @@ const run = (sql, params = []) =>
 
 const get = (sql, params = []) =>
   new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
+    getDb().get(sql, params, (err, row) => {
       if (err) reject(err);
       else resolve(row);
     });
@@ -42,11 +52,26 @@ const get = (sql, params = []) =>
 
 const all = (sql, params = []) =>
   new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
+    getDb().all(sql, params, (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });
   });
+
+const hashPassword = (password) => {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+};
+
+const verifyPassword = (password, stored) => {
+  const [salt, key] = stored.split(":");
+  if (!salt || !key) return false;
+  const hash = crypto.scryptSync(password, salt, 64);
+  const keyBuffer = Buffer.from(key, "hex");
+  if (keyBuffer.length !== hash.length) return false;
+  return crypto.timingSafeEqual(keyBuffer, hash);
+};
 
 const initDb = async () => {
   await run(
@@ -123,34 +148,49 @@ const initDb = async () => {
       created_at TEXT NOT NULL
     )`
   );
+
+  // Seed default user so login always works after a cold start
+  const defaultUser = await get("SELECT id FROM users WHERE username = ?", ["Rohith"]);
+  if (!defaultUser) {
+    const passwordHash = hashPassword("123");
+    const now = new Date().toISOString();
+    await run(
+      "INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
+      ["Rohith", "rohith@trackvista.com", passwordHash, now]
+    );
+  }
 };
 
-const hashPassword = (password) => {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `${salt}:${hash}`;
-};
+let dbInitialized = false;
 
-const verifyPassword = (password, stored) => {
-  const [salt, key] = stored.split(":");
-  if (!salt || !key) return false;
-  const hash = crypto.scryptSync(password, salt, 64);
-  const keyBuffer = Buffer.from(key, "hex");
-  if (keyBuffer.length !== hash.length) return false;
-  return crypto.timingSafeEqual(keyBuffer, hash);
-};
+// Middleware: ensure DB is initialized on every request (critical for Vercel cold starts)
+app.use(async (req, res, next) => {
+  if (!dbInitialized) {
+    try {
+      await initDb();
+      dbInitialized = true;
+    } catch (error) {
+      console.error("DB init error:", error);
+      return res.status(500).json({ error: "Database initialization failed" });
+    }
+  }
+  next();
+});
 
-const sessions = new Map();
-const createToken = () => crypto.randomBytes(24).toString("hex");
-
+// JWT-based auth middleware (replaces in-memory sessions)
 const requireAuth = (req, res, next) => {
   const auth = req.headers.authorization || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
-  if (!token || !sessions.has(token)) {
+  if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  req.userId = sessions.get(token);
-  next();
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.userId = payload.userId;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
 };
 
 app.post("/api/auth/signup", async (req, res) => {
@@ -199,8 +239,8 @@ app.post("/api/auth/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    const token = createToken();
-    sessions.set(token, user.id);
+    // Create JWT token instead of in-memory session
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.json({
       token,
@@ -262,8 +302,7 @@ app.post("/api/projects", requireAuth, async (req, res) => {
         deadline,
         attachment_name,
         created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      ,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.userId,
         resolvedName,
@@ -338,8 +377,7 @@ app.post("/api/meetings", requireAuth, async (req, res) => {
         time_end,
         meeting_type,
         created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-      ,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.userId,
         meetingTitle,
@@ -392,8 +430,7 @@ app.post("/api/feedback", requireAuth, async (req, res) => {
         suggestion,
         anonymous,
         created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      ,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         anonymous ? null : req.userId,
         projectSelection,
@@ -461,12 +498,22 @@ app.post("/api/messages", requireAuth, async (req, res) => {
   }
 });
 
+// Catch-all: serve index.html for any non-API route (SPA fallback)
+app.get("*", (req, res) => {
+  if (!req.path.startsWith("/api")) {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  } else {
+    res.status(404).json({ error: "Not found" });
+  }
+});
+
 module.exports = app;
 
 if (!isVercel) {
   const PORT = process.env.PORT || 3000;
   initDb()
     .then(() => {
+      dbInitialized = true;
       app.listen(PORT, () => {
         console.log(`TrackVista API running on http://localhost:${PORT}`);
       });
@@ -475,8 +522,4 @@ if (!isVercel) {
       console.error("Failed to initialize database", error);
       process.exit(1);
     });
-} else {
-  initDb().catch((error) => {
-    console.error("Failed to initialize database", error);
-  });
 }
